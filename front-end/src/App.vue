@@ -4,31 +4,64 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      lista: [],
+      allTasks: [],
+      newTask: '',
     }
-  },
-  mounted() {
-    axios
-      .get('http://localhost/')
-      .then((res) => {
-        console.log("lista", res.data);
-        this.lista = res.data;
-      });
   },
   methods: {
     delTask(index) {
-      console.log("delete task " + index);
-    }
+
+      const t = this;
+      const params = {
+        params: {
+          index: index
+        }
+      };
+      axios.get("http://localhost/deletePost.php", params)
+        .then(res => {
+          t.allTasks = res.data;
+        })
+        .catch(err => console.log(err));
+    },
+    pushTask(index) {
+
+      const t = this;
+      const params = {
+        text: this.newTask
+      };
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+      axios.post('http://localhost/pushPost.php', params, config)
+        .then(res => {
+          t.allTasks = res.data;
+          t.newTask = "";
+        }).catch(err => console.log(err));
+    },
+  },
+  mounted() {
+    axios
+      .get('http://localhost/index.php')
+      .then((res) => {
+        console.log("allTasks", res.data);
+        this.allTasks = res.data;
+      });
   }
 };
 </script>
 
 <template>
   <h1>TO DO LIST</h1>
+  <form @submit.prevent="pushTask">
+    <input type="text" name="text" v-model="newTask">
+    <input type="submit" value="ADD">
+  </form>
   <ul>
-    <li v-for="(elemento, index) in lista">
+    <li v-for="(elemento, index) in allTasks" :key="index">
       {{ elemento.name }}
-      <button @click="delTask(index)" type="button">X</button>
+      <button @click="delTask(index)">X</button>
     </li>
   </ul>
 </template>
