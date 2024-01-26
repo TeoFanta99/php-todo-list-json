@@ -40,6 +40,10 @@ export default {
           t.newTask = "";
         }).catch(err => console.log(err));
     },
+    changeStatus(index) {
+      const task = this.allTasks[index];
+      task.done = !task.done;
+    }
   },
   mounted() {
     axios
@@ -59,11 +63,15 @@ export default {
     <input type="submit" value="ADD">
   </form>
   <ul>
-    <li v-for="(elemento, index) in allTasks" :key="index">
-      {{ elemento.name }}
+    <li v-for="(task, index) in allTasks" :key="index" @click="changeStatus(index)" :class="{ 'barrato': task.done }">
+      {{ task.name }}
       <button @click="delTask(index)">X</button>
     </li>
   </ul>
 </template>
 
-<style scoped></style>
+<style scoped>
+.barrato {
+  text-decoration-line: line-through;
+}
+</style>

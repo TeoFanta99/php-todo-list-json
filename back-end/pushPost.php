@@ -13,7 +13,8 @@ $posts = json_decode($jsonPosts, true);
 
 $text = $_POST['text'];
 $newPost = [
-    'name' => $text
+    'name' => $text,
+    'done' => false,
 ];
 
 $posts[] = $newPost;
